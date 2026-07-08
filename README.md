@@ -107,6 +107,8 @@ git push -u origin main
 
 ## Tài liệu
 
-- Thiết kế: `docs/superpowers/specs/`
+- **Kiến trúc (living):** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+- **Hợp đồng tích hợp:** [`docs/interfaces.md`](docs/interfaces.md) — TileImage, topics, ZMQ, env (bên thứ 3 & downstream đọc file này)
+- Thiết kế (lịch sử): `docs/superpowers/specs/`
 - Test spec: `docs/superpowers/test-specs/`
 - Kế hoạch triển khai: `docs/superpowers/plans/`
