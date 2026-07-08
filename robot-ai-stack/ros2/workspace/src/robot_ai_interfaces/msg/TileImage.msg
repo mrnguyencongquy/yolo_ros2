@@ -1,0 +1,13 @@
+std_msgs/Header header
+string image_id
+uint16 tile_index
+uint16 tile_row
+uint16 tile_col
+uint16 num_tiles
+uint32 x_offset
+uint32 y_offset
+uint32 tile_width
+uint32 tile_height
+uint32 orig_width
+uint32 orig_height
+sensor_msgs/Image image
