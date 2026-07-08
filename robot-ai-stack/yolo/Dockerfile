@@ -1,0 +1,24 @@
+FROM dustynv/pytorch:2.7-r36.4.0-cu128-24.04
+
+ENV LD_LIBRARY_PATH=/opt/nvidia/l4t-gpu-libs/nvgpu:/usr/local/cuda/lib64
+
+RUN apt-get update && apt-get install -y \
+    libxcb1 \
+    libx11-6 \
+    libxext6 \
+    libsm6 \
+    libxrender1 \
+    libgl1 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+
+RUN PIP_INDEX_URL=https://pypi.org/simple \
+    pip install --no-cache-dir -r requirements.txt
+
+WORKDIR /app
+
+COPY app ./app
+COPY models ./models
+
+CMD ["python3", "app/detector.py"]

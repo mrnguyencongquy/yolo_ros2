@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+
+# ROS2 colcon
+build/
+install/
+log/
+
+# Env (per-machine platform selection)
+.env
+
+# Docker/IDE
+*.log
+.vscode/
