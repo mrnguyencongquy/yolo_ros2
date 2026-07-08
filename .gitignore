@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .venv/
+.pytest_cache/
+
+# Claude Code local
+.claude/
 
 # ROS2 colcon
 build/
