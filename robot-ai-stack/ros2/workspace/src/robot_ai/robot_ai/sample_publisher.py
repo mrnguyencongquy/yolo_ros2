@@ -47,12 +47,15 @@ class SamplePublisher(Node):
         if img is None:
             self.get_logger().warning(f"Unreadable image, skipping: {fname}")
             return
+        # image_id phải duy nhất mỗi frame (tiler thật gửi id/khung khác nhau);
+        # ở đây gắn frame counter để mỗi vòng đọc lại file là một "ảnh gốc" mới.
+        image_id = f"{fname}#{self._idx}"
         h, w = img.shape[:2]
         if self._mode == "passthrough":
-            self._publish_tile(fname, 0, 0, 0, 1, 0, 0, w, h, w, h, img)
+            self._publish_tile(image_id, 0, 0, 0, 1, 0, 0, w, h, w, h, img)
         else:
             for spec, tile in split_image(img, self._cols, self._rows):
-                self._publish_tile(fname, spec.index, spec.row, spec.col,
+                self._publish_tile(image_id, spec.index, spec.row, spec.col,
                                    self._cols * self._rows, spec.x_offset, spec.y_offset,
                                    spec.width, spec.height, w, h, tile)
 
