@@ -3,49 +3,27 @@ services:
   ros2:
     build:
       context: ./ros2
-
     container_name: ros2_node
-
     network_mode: host
-
     environment:
       - ROS_DOMAIN_ID=0
-
+      - YOLO_ZMQ_PORT=5555
+      - SAMPLE_DIR=/images
     volumes:
       - ./shared/images:/images
-
     stdin_open: true
     tty: true
-
-
 
   yolo:
     build:
       context: ./yolo
-
     container_name: yolo_detector
-
     network_mode: host
-
-
     environment:
-
-      NVIDIA_VISIBLE_DEVICES: all
-      NVIDIA_DRIVER_CAPABILITIES: all
-
-      LD_LIBRARY_PATH: /opt/nvidia/l4t-gpu-libs/nvgpu:/usr/local/cuda/lib64
-
-
-    devices:
-      - nvidia.com/gpu=all
-
-
+      - YOLO_ZMQ_PORT=5555
+      - YOLO_MODEL=/app/models/yolo26n.pt
     volumes:
-
       - ./shared/images:/images
-
       - ./models:/models
-
-
     depends_on:
       - ros2
