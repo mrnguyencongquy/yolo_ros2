@@ -24,6 +24,7 @@ Mọi thay đổi **logic thuần** phải kèm/chỉnh test tương ứng (xem 
 ## Quy ước commit — Conventional Commits
 
 `type(scope): mô tả` — `type` ∈ `feat, fix, docs, test, chore, refactor`. Ví dụ:
+
 ```
 feat(robot_ai): add overlap NMS across tiles
 fix(yolo): handle empty model dir
