@@ -4,6 +4,8 @@ __pycache__/
 *.egg-info/
 .venv/
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
 # Claude Code local
 .claude/
@@ -15,7 +17,22 @@ log/
 
 # Env (per-machine platform selection)
 .env
+*.env.local
 
 # Docker/IDE
 *.log
 .vscode/
+.idea/
+
+# Runtime/sample data
+# Keep committed lightweight sample(s); ignore large ad-hoc captures.
+robot-ai-stack/shared/images/*
+!robot-ai-stack/shared/images/test_4k.jpg
+
+# Model artifacts
+# Existing small bootstrap weights may remain tracked; new trained/exported weights
+# should be added deliberately with git add -f if they are meant to be versioned.
+robot-ai-stack/yolo/models/*.pt
+robot-ai-stack/yolo/models/*.onnx
+robot-ai-stack/yolo/models/*.engine
+robot-ai-stack/yolo/models/*.trt

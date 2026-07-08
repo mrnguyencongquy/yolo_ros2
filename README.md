@@ -109,6 +109,8 @@ git push -u origin main
 
 - **Kiến trúc (living):** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - **Hợp đồng tích hợp:** [`docs/interfaces.md`](docs/interfaces.md) — TileImage, topics, ZMQ, env (bên thứ 3 & downstream đọc file này)
+- **Workflow input/output/metadata:** [`docs/workflow.md`](docs/workflow.md)
+- **Vận hành / runbook:** [`docs/operations.md`](docs/operations.md)
 - Thiết kế (lịch sử): `docs/superpowers/specs/`
 - Test spec: `docs/superpowers/test-specs/`
 - Kế hoạch triển khai: `docs/superpowers/plans/`

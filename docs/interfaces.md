@@ -2,7 +2,7 @@
 
 > Hợp đồng tích hợp giữa các bên. **Bên thứ 3** (tiler) publish vào `/image_tiles`; **downstream** consume `/grass_detections`. Thay đổi contract phải bump version (mục cuối) và ghi `CHANGELOG`.
 
-**Contract version:** `1.0.0`
+**Contract version:** `1.1.0`
 
 ---
 
@@ -41,13 +41,14 @@
 ### Ánh xạ trường
 | Detection2DArray | Nguồn |
 |---|---|
-| `header.stamp` / `header.frame_id` | copy từ `TileImage.header` của tile cuối gom được |
+| `header.stamp` | copy từ `TileImage.header.stamp` của tile cuối gom được |
+| `header.frame_id` | = **`image_id`** của ảnh gốc (để downstream truy vết) |
 | `detections[i].bbox.center.position.x/y` | tâm bbox GLOBAL (px) |
 | `detections[i].bbox.size_x/size_y` | rộng/cao bbox GLOBAL (px) |
 | `detections[i].results[0].hypothesis.class_id` | tên class (string, vd `person`, sau này `grass`) |
 | `detections[i].results[0].hypothesis.score` | confidence `[0..1]` |
 
-> **Known limitation:** `image_id` **hiện chưa** được đưa vào output (chỉ dùng nội bộ để gom); `header.frame_id` mang frame_id nguồn (vd `sample`). Nếu downstream cần truy vết về đúng ảnh gốc → khuyến nghị map `header.frame_id = image_id` (roadmap).
+> **Traceability:** downstream lấy `image_id` của ảnh gốc từ `header.frame_id` (từ contract v1.1.0). `stamp` giữ theo tile nguồn.
 
 ---
 

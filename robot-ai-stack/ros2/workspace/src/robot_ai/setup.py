@@ -12,6 +12,7 @@ setup(
         ("share/" + package_name + "/launch", ["launch/robot_ai.launch.py"]),
     ],
     install_requires=["setuptools"],
+    tests_require=["pytest"],
     zip_safe=True,
     maintainer="vizo",
     maintainer_email="dev3@vizo.co.jp",

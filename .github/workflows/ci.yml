@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install deps
+        run: pip install numpy opencv-python-headless pyzmq pytest
+      - name: robot_ai pure-logic tests
+        working-directory: robot-ai-stack/ros2/workspace/src/robot_ai
+        run: PYTHONPATH=$PWD python -m pytest test -v
+      - name: yolo tests
+        working-directory: robot-ai-stack/yolo
+        run: python -m pytest tests -v
+
+  ros2-build:
+    runs-on: ubuntu-latest
+    container: ros:jazzy-ros-base
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build deps
+        run: |
+          apt-get update && apt-get install -y \
+            git python3-colcon-common-extensions python3-zmq python3-opencv \
+            ros-jazzy-cv-bridge ros-jazzy-sensor-msgs ros-jazzy-vision-msgs
+      - name: colcon build
+        working-directory: robot-ai-stack/ros2/workspace
+        run: |
+          . /opt/ros/jazzy/setup.sh
+          colcon build

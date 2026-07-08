@@ -57,6 +57,8 @@ class YoloBridge(Node):
 
     def _emit(self, image_id: str, dets: list):
         header = self._last_header.pop(image_id, Header())
+        # Truy vết kết quả về đúng ảnh gốc: đưa image_id vào frame_id (giữ nguyên stamp).
+        header.frame_id = image_id
         self._pub.publish(build_detection_array(header, dets))
         self.get_logger().info(f"published {len(dets)} dets for image_id={image_id}")
 
