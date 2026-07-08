@@ -21,4 +21,4 @@ WORKDIR /app
 COPY app ./app
 COPY models ./models
 
-CMD ["python3", "app/detector.py"]
+CMD ["python3", "-m", "app.yolo_server"]

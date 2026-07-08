@@ -1,0 +1,14 @@
+FROM pytorch/pytorch:2.5.1-cuda12.4-cudnn9-runtime
+
+RUN apt-get update && apt-get install -y \
+    libxcb1 libx11-6 libxext6 libsm6 libxrender1 libgl1 libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN PIP_INDEX_URL=https://pypi.org/simple pip install --no-cache-dir -r requirements.txt
+
+WORKDIR /app
+COPY app ./app
+COPY models ./models
+
+CMD ["python3", "-m", "app.yolo_server"]
