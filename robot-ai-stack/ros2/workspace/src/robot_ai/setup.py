@@ -22,6 +22,7 @@ setup(
         "console_scripts": [
             "sample_publisher = robot_ai.sample_publisher:main",
             "yolo_bridge = robot_ai.yolo_bridge:main",
+            "result_writer = robot_ai.result_writer:main",
         ],
     },
 )

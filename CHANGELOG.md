@@ -9,6 +9,7 @@ Tất cả thay đổi đáng kể của project ghi ở đây.
 - `docs/ARCHITECTURE.md` (living) và `docs/interfaces.md` (integration contract).
 - CHANGELOG, CONTRIBUTING, LICENSE, ADR (`docs/adr/`), CI GitHub Actions.
 - Truy vết `image_id` ra `/grass_detections` qua `header.frame_id` — **contract 1.1.0**.
+- Node tuỳ chọn `result_writer` — lưu `/grass_detections` ra `shared/output/` (JSON + ảnh annotate), env-gated `RESULT_SAVE` (mặc định TẮT), `RESULT_FORMAT=json|annotated|both`.
 
 ### Changed
 - `Detection2DArray.header.frame_id` giờ mang `image_id` của ảnh gốc (trước là frame_id nguồn).

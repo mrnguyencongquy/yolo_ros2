@@ -31,6 +31,9 @@ robot-ai-stack/shared/images/*
 !robot-ai-stack/shared/images/4k_1.jpg
 !robot-ai-stack/shared/images/4k_2.jpg
 
+# Runtime output (verify artifacts from result_writer)
+robot-ai-stack/shared/output/
+
 
 # Model artifacts
 # Existing small bootstrap weights may remain tracked; new trained/exported weights

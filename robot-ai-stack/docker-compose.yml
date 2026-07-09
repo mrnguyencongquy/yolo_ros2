@@ -9,8 +9,13 @@ services:
       - ROS_DOMAIN_ID=0
       - YOLO_ZMQ_PORT=5555
       - SAMPLE_DIR=/images
+      # Lưu kết quả để verify (mặc định TẮT; bật: RESULT_SAVE=1 docker compose up)
+      - RESULT_SAVE=${RESULT_SAVE:-0}
+      - RESULT_FORMAT=${RESULT_FORMAT:-both}
+      - RESULT_DIR=/output
     volumes:
       - ./shared/images:/images
+      - ./shared/output:/output
     stdin_open: true
     tty: true
 
