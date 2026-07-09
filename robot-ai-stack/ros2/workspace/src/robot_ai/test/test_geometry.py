@@ -1,4 +1,4 @@
-from robot_ai.geometry import BBox, normalize_bbox, local_to_global
+from robot_ai.geometry import BBox, normalize_bbox, local_to_global, point_local_to_global
 
 
 def test_happy_shift():                       # TC-56
@@ -33,3 +33,8 @@ def test_far_corner_tile():                   # TC-12
 def test_pure_idempotent():                   # TC-38
     args = (BBox(1, 2, 3, 4), 10, 20, 100, 100)
     assert local_to_global(*args) == local_to_global(*args)
+
+
+def test_point_local_to_global():
+    assert point_local_to_global(10, 20, 960, 720, 3840, 2160) == (970.0, 740.0)
+    assert point_local_to_global(10, 20, 3835, 2155, 3840, 2160) == (3840, 2160)

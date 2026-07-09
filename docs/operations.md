@@ -135,7 +135,7 @@ Xem publisher/subscriber:
 
 ```bash
 ros2 topic info /image_tiles -v
-ros2 topic info /grass_detections -v
+ros2 topic info /grass_segments -v
 ```
 
 Xem một input tile:
@@ -147,17 +147,17 @@ ros2 topic echo /image_tiles --once
 Xem output detection:
 
 ```bash
-ros2 topic echo /grass_detections
+ros2 topic echo /grass_segments
 ```
 
 Xem tần suất:
 
 ```bash
 ros2 topic hz /image_tiles
-ros2 topic hz /grass_detections
+ros2 topic hz /grass_segments
 ```
 
-Nếu `/image_tiles` có data nhưng `/grass_detections` không có:
+Nếu `/image_tiles` có data nhưng `/grass_segments` không có:
 
 ```bash
 docker compose logs --tail=100 ros2

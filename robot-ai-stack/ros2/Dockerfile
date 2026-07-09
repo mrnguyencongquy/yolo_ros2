@@ -10,7 +10,6 @@ RUN apt update && apt install -y \
     ros-jazzy-cv-bridge \
     ros-jazzy-image-transport \
     ros-jazzy-sensor-msgs \
-    ros-jazzy-vision-msgs \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /workspace

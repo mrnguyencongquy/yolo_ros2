@@ -1,8 +1,8 @@
 # Interfaces / Integration Contract — yolo_ros2
 
-> Hợp đồng tích hợp giữa các bên. **Bên thứ 3** (tiler) publish vào `/image_tiles`; **downstream** consume `/grass_detections`. Thay đổi contract phải bump version (mục cuối) và ghi `CHANGELOG`.
+> Hợp đồng tích hợp giữa các bên. **Bên thứ 3** (tiler) publish vào `/image_tiles`; **downstream** consume `/grass_segments`. Thay đổi contract phải bump version (mục cuối) và ghi `CHANGELOG`.
 
-**Contract version:** `1.1.0`
+**Contract version:** `2.0.0`
 
 ---
 
@@ -31,24 +31,30 @@
 
 ---
 
-## 2. Output topic — `/grass_detections`
+## 2. Output topic — `/grass_segments`
 
-- **Type:** `vision_msgs/msg/Detection2DArray`
+- **Type:** `robot_ai_interfaces/msg/GrassSegmentationArray`
 - **Publisher:** `yolo_bridge`
-- **Subscriber:** downstream (điều hướng/xử lý)
-- **Ngữ nghĩa:** **1 message / ảnh gốc**, phát khi gom đủ `num_tiles` tile (hoặc hết `AGG_TIMEOUT`). Toạ độ **GLOBAL** (theo ảnh gốc), đã clamp `[0..orig_w]×[0..orig_h]`. Ảnh không có vật → `detections` rỗng (vẫn phát).
+- **Subscriber:** downstream consumer
+- **Ngữ nghĩa:** **1 message / ảnh gốc**, phát khi gom đủ `num_tiles` tile (hoặc hết `AGG_TIMEOUT`). Bbox/polygon là toạ độ **GLOBAL** theo ảnh gốc, đã clamp `[0..orig_w]×[0..orig_h]`. Ảnh không có vật → `segments` rỗng (vẫn phát).
 
-### Ánh xạ trường
-| Detection2DArray | Nguồn |
-|---|---|
-| `header.stamp` | copy từ `TileImage.header.stamp` của tile cuối gom được |
-| `header.frame_id` | = **`image_id`** của ảnh gốc (để downstream truy vết) |
-| `detections[i].bbox.center.position.x/y` | tâm bbox GLOBAL (px) |
-| `detections[i].bbox.size_x/size_y` | rộng/cao bbox GLOBAL (px) |
-| `detections[i].results[0].hypothesis.class_id` | tên class (string, vd `person`, sau này `grass`) |
-| `detections[i].results[0].hypothesis.score` | confidence `[0..1]` |
+### `GrassSegmentationArray.msg`
+| Field | Type | Ý nghĩa |
+|---|---|---|
+| `header` | `std_msgs/Header` | `stamp` giữ theo tile nguồn; `frame_id = image_id` |
+| `image_id` | `string` | ID ảnh gốc/frame |
+| `segments` | `GrassSegment[]` | danh sách segment/detection |
 
-> **Traceability:** downstream lấy `image_id` của ảnh gốc từ `header.frame_id` (từ contract v1.1.0). `stamp` giữ theo tile nguồn.
+### `GrassSegment.msg`
+| Field | Type | Ý nghĩa |
+|---|---|---|
+| `class_name` | `string` | tên class model trả về, vd `grass` |
+| `score` | `float32` | confidence `[0..1]` |
+| `bbox` | `robot_ai_interfaces/BBox2D` | bbox GLOBAL dạng center + size (`center_x, center_y, size_x, size_y, theta`) |
+| `mask` | `sensor_msgs/Image` | mask bitmap; hiện để rỗng cho model detect/bbox hoặc khi chưa vận chuyển mask bitmap |
+| `polygon` | `geometry_msgs/Polygon` | polygon GLOBAL nếu YOLO segmentation model trả mask polygon |
+
+> Hiện ZeroMQ reply vẫn là JSON. Với model detection thường, `polygon=[]` và `mask` rỗng. Với YOLO segmentation model, `polygon` được map từ tile-local sang ảnh gốc. `mask` là field dự phòng cho bước vận chuyển mask bitmap sau này.
 
 ---
 
@@ -58,10 +64,11 @@
 
 - **Transport:** ZeroMQ **REQ/REP**, `tcp://127.0.0.1:${YOLO_ZMQ_PORT}` (mặc định 5555), lockstep.
 - **Request** (bridge→server): raw bytes = **ảnh JPEG** của 1 tile.
-- **Reply** (server→bridge): UTF-8 **JSON**, list các object toạ độ **LOCAL** (trong tile):
+- **Reply** (server→bridge): UTF-8 **JSON**, list các object/segment toạ độ **LOCAL** (trong tile):
   ```json
-  [{"class_id": 0, "class_name": "person", "confidence": 0.87, "bbox": [x1, y1, x2, y2]}]
+  [{"class_id": 0, "class_name": "grass", "confidence": 0.87, "bbox": [x1, y1, x2, y2], "polygon": [[x, y]]}]
   ```
+- `polygon` optional; có khi model segmentation trả mask polygon. Detection-only model trả `polygon: []`.
 - **Lỗi:** ảnh hỏng/rỗng → server trả `[]`. Bridge timeout (`RCVTIMEO`) → bỏ tile đó, tái tạo socket, tiếp tục.
 
 ---
@@ -71,9 +78,10 @@
 | Biến | Service | Mặc định | Ý nghĩa |
 |---|---|---|---|
 | `YOLO_ZMQ_PORT` | ros2 + yolo | `5555` | Cổng ZMQ (2 bên phải khớp) |
-| `YOLO_MODEL` | yolo | `/app/models/yolo26n.pt` | Model weights (đổi sang weights cỏ khi có) |
+| `YOLO_MODEL` | yolo | `/app/models/yolo26n-seg.pt` | Model weights (đổi sang weights cỏ khi có) |
 | `YOLO_TARGET_CLASSES` | yolo | (rỗng) | Lọc class, ngăn cách dấu phẩy (vd `grass`); rỗng = tất cả |
 | `SAMPLE_DIR` | ros2 | `/images` | Folder ảnh cho `sample_publisher` (mount từ `shared/images`) |
+| `RESULT_SAVE` / `RESULT_FORMAT` / `RESULT_DIR` | ros2 | `0` / `both` / `/output` | `result_writer` lưu `/grass_segments` ra file (mặc định TẮT) |
 | `ROS_DOMAIN_ID` | ros2 | `0` | ROS2 domain |
 
 **Tham số node `sample_publisher`** (launch): `mode` (`simulate_tiles`|`passthrough`), `cols` (4), `rows` (3), `period_s` (2.0).
@@ -84,14 +92,16 @@
 
 - **LOCAL:** trong tile, gốc `(0,0)` ở góc trên-trái tile — do `yolo_server` trả.
 - **GLOBAL:** trong ảnh gốc — `gx = x_offset + lx`, `gy = y_offset + ly`, clamp `[0..orig]`. Do `yolo_bridge` tính (`geometry.local_to_global`).
-- bbox format nội bộ `[x1, y1, x2, y2]`; ra `Detection2DArray` đổi sang center + size.
+- bbox format nội bộ `[x1, y1, x2, y2]`; ra `GrassSegment.bbox` đổi sang center + size.
+- polygon format nội bộ `[[x, y], ...]`; ra `GrassSegment.polygon.points[]`.
 
 ---
 
 ## 6. Versioning contract
 
 - Theo **SemVer** cho contract này (độc lập version code).
-- **MAJOR**: đổi/xoá field, đổi type, đổi ngữ nghĩa gom → phá tương thích.
+- **MAJOR**: đổi/xoá field, đổi type, đổi ngữ nghĩa gom, **xoá topic** → phá tương thích.
 - **MINOR**: thêm field optional, thêm topic/env mới (tương thích ngược).
 - **PATCH**: làm rõ tài liệu, sửa mặc định không phá vỡ.
 - Mỗi thay đổi cập nhật **Contract version** ở đầu file + ghi `CHANGELOG.md`, thông báo bên thứ 3 & downstream.
+- **2.0.0:** bỏ topic tương thích `/grass_detections` (`vision_msgs/Detection2DArray`); `/grass_segments` là output DUY NHẤT.

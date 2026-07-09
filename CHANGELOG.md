@@ -9,10 +9,11 @@ Tất cả thay đổi đáng kể của project ghi ở đây.
 - `docs/ARCHITECTURE.md` (living) và `docs/interfaces.md` (integration contract).
 - CHANGELOG, CONTRIBUTING, LICENSE, ADR (`docs/adr/`), CI GitHub Actions.
 - Truy vết `image_id` ra `/grass_detections` qua `header.frame_id` — **contract 1.1.0**.
-- Node tuỳ chọn `result_writer` — lưu `/grass_detections` ra `shared/output/` (JSON + ảnh annotate), env-gated `RESULT_SAVE` (mặc định TẮT), `RESULT_FORMAT=json|annotated|both`.
+- Custom segmentation output `/grass_segments` với `GrassSegmentationArray/GrassSegment` — **contract 1.2.0**.
+- Node tuỳ chọn `result_writer` — lưu `/grass_segments` ra `shared/output/` (JSON + ảnh annotate + polygon), env-gated `RESULT_SAVE` (mặc định TẮT), `RESULT_FORMAT=json|annotated|both`.
 
-### Changed
-- `Detection2DArray.header.frame_id` giờ mang `image_id` của ảnh gốc (trước là frame_id nguồn).
+### Removed
+- Topic tương thích `/grass_detections` (`vision_msgs/Detection2DArray`) — **contract 2.0.0**; `/grass_segments` là output DUY NHẤT. Bỏ `vision_msgs` khỏi deps.
 
 ## [0.1.0] - 2026-07-08
 

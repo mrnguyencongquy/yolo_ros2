@@ -3,11 +3,12 @@ import os
 import re
 
 import cv2
+import numpy as np
 import rclpy
 from rclpy.node import Node
-from vision_msgs.msg import Detection2DArray
 
-from robot_ai.result_format import detections_to_list
+from robot_ai_interfaces.msg import GrassSegmentationArray
+from robot_ai.result_format import segments_to_list
 
 _SAFE = re.compile(r"[^A-Za-z0-9._#-]")
 
@@ -17,7 +18,7 @@ def _truthy(v) -> bool:
 
 
 class ResultWriter(Node):
-    """Downstream (tuỳ chọn): lưu kết quả /grass_detections ra file để kiểm/verify.
+    """Downstream (tuỳ chọn): lưu kết quả /grass_segments ra file để kiểm/verify.
 
     MẶC ĐỊNH TẮT — bật bằng env/param để không ghi file khi production.
       RESULT_SAVE=1        bật lưu
@@ -40,25 +41,25 @@ class ResultWriter(Node):
 
         if self._save:
             os.makedirs(self._out, exist_ok=True)
-        self.create_subscription(Detection2DArray, "/grass_detections", self._on, 10)
+        self.create_subscription(GrassSegmentationArray, "/grass_segments", self._on, 10)
         self.get_logger().info(
             f"result_writer save={self._save} format={self._format} dir={self._out}"
         )
 
-    def _on(self, msg: Detection2DArray):
+    def _on(self, msg: GrassSegmentationArray):
         if not self._save:
             return
-        image_id = msg.header.frame_id or "frame"
+        image_id = msg.image_id or msg.header.frame_id or "frame"
         stem = _SAFE.sub("_", image_id)
-        dets = detections_to_list(msg)
+        segs = segments_to_list(msg)
         if self._format in ("json", "both"):
             with open(os.path.join(self._out, stem + ".json"), "w") as f:
-                json.dump({"image_id": image_id, "detections": dets}, f, indent=2)
+                json.dump({"image_id": image_id, "segments": segs}, f, indent=2)
         if self._format in ("annotated", "both"):
-            self._save_annotated(image_id, stem, dets)
-        self.get_logger().info(f"saved {stem} ({len(dets)} dets)")
+            self._save_annotated(image_id, stem, segs)
+        self.get_logger().info(f"saved {stem} ({len(segs)} segments)")
 
-    def _save_annotated(self, image_id: str, stem: str, dets: list):
+    def _save_annotated(self, image_id: str, stem: str, segs: list):
         # Dev: image_id dạng "<file>#<frame>" → đọc lại ảnh gốc trong SAMPLE_DIR để vẽ.
         src = image_id.split("#")[0]
         path = os.path.join(self._sample_dir, src)
@@ -66,11 +67,14 @@ class ResultWriter(Node):
         if img is None:
             self.get_logger().warning(f"annotated skip: cannot read source {path}")
             return
-        for d in dets:
-            x1, y1, x2, y2 = (int(v) for v in d["bbox_xyxy"])
+        for s in segs:
+            x1, y1, x2, y2 = (int(v) for v in s["bbox_xyxy"])
             cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-            cv2.putText(img, f'{d["class_name"]}:{d["score"]:.2f}', (x1, max(0, y1 - 4)),
+            cv2.putText(img, f'{s["class_name"]}:{s["score"]:.2f}', (x1, max(0, y1 - 4)),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+            if s["polygon"]:
+                pts = np.array(s["polygon"], dtype=np.int32).reshape(-1, 1, 2)
+                cv2.polylines(img, [pts], isClosed=True, color=(0, 200, 255), thickness=2)
         cv2.imwrite(os.path.join(self._out, stem + ".jpg"), img)
 
 

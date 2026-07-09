@@ -13,7 +13,7 @@ ROS2 Jazzy + YOLO (Ultralytics) tiling detection pipeline. Dev trên **PC x86 (C
    nhận bbox LOCAL ◀──── ZeroMQ REP :5555 ─────┘
    ── LOCAL→GLOBAL (cộng offset tile) + gom 12 tile theo image_id
         │
-        ▼  /grass_detections  (vision_msgs/Detection2DArray, toạ độ ảnh gốc 4K)
+        ▼  /grass_segments  (GrassSegmentationArray, toạ độ ảnh gốc 4K)
 [ROS2 downstream]
 ```
 
@@ -47,14 +47,14 @@ docker compose up --build
 
 Khi chạy sẽ thấy:
 - `yolo`: `[yolo_server] device=cuda ...` + `listening on tcp://*:5555`.
-- `ros2`: `published N dets for image_id=<file>#<frame>` — mỗi dòng là 1 ảnh gốc đã xử lý & publish lên `/grass_detections`.
+- `ros2`: `published N segments for image_id=<file>#<frame>` — mỗi dòng là 1 ảnh gốc đã xử lý & publish lên `/grass_segments`.
 
 ## Xem kết quả & thao tác thường dùng
 
 ```bash
 # Xem message detection (mở terminal khác)
 docker compose exec ros2 bash -lc \
-  "source /opt/ros/jazzy/setup.bash && source /workspace/install/setup.bash && ros2 topic echo /grass_detections"
+  "source /opt/ros/jazzy/setup.bash && source /workspace/install/setup.bash && ros2 topic echo /grass_segments"
 
 # Xem log
 docker compose logs -f yolo      # server (device, listening, lỗi)

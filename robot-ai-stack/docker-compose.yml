@@ -26,7 +26,7 @@ services:
     network_mode: host
     environment:
       - YOLO_ZMQ_PORT=5555
-      - YOLO_MODEL=/app/models/yolo26n.pt
+      - YOLO_MODEL=/app/models/yolo26n-seg.pt
     volumes:
       - ./shared/images:/images
       - ./models:/models

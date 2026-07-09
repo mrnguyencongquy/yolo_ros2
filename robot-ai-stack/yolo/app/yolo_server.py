@@ -14,7 +14,7 @@ def _get_port() -> int:
 
 def main() -> None:
     port = _get_port()
-    model_path = os.environ.get("YOLO_MODEL", "/app/models/yolo26n.pt")
+    model_path = os.environ.get("YOLO_MODEL", "/app/models/yolo26n-seg.pt")
     if not os.path.exists(model_path):
         print(f"[yolo_server] model not found: {model_path}", file=sys.stderr)
         sys.exit(3)

@@ -17,18 +17,25 @@ class FakeBox:
 
 
 class FakeResult:
-    def __init__(self, boxes):
+    def __init__(self, boxes, masks=None):
         self.boxes = boxes
+        self.masks = masks
+
+
+class FakeMasks:
+    def __init__(self, xy):
+        self.xy = xy
 
 
 class FakeModel:
     names = {0: "grass", 1: "tree"}
 
-    def __init__(self, boxes):
+    def __init__(self, boxes, masks=None):
         self._boxes = boxes
+        self._masks = masks
 
     def __call__(self, img, verbose=False):
-        return [FakeResult(self._boxes)]
+        return [FakeResult(self._boxes, self._masks)]
 
 
 def test_decode_bad_returns_none():            # TC-03
@@ -62,3 +69,10 @@ def test_target_class_filter():                # TC-31
     m = FakeModel([FakeBox(0, 0.9, [1, 1, 2, 2]), FakeBox(1, 0.9, [3, 3, 4, 4])])
     out = run_inference(m, np.zeros((8, 8, 3), np.uint8), target_classes={"grass"})
     assert len(out) == 1 and out[0]["class_name"] == "grass"
+
+
+def test_segmentation_polygon():
+    masks = FakeMasks([np.array([[1, 2], [3, 4]], dtype=np.float32)])
+    m = FakeModel([FakeBox(0, 0.9, [1, 2, 3, 4])], masks=masks)
+    out = run_inference(m, np.zeros((8, 8, 3), np.uint8))
+    assert out[0]["polygon"] == [[1.0, 2.0], [3.0, 4.0]]

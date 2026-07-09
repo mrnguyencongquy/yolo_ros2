@@ -27,3 +27,11 @@ def local_to_global(b: BBox, x_offset: int, y_offset: int, orig_w: int, orig_h: 
         _clamp(b.x2 + x_offset, 0, orig_w),
         _clamp(b.y2 + y_offset, 0, orig_h),
     )
+
+
+def point_local_to_global(x: float, y: float, x_offset: int, y_offset: int, orig_w: int, orig_h: int) -> tuple[float, float]:
+    """Dời 1 điểm tile-local → ảnh gốc, clamp về [0..orig]."""
+    return (
+        _clamp(float(x) + x_offset, 0, orig_w),
+        _clamp(float(y) + y_offset, 0, orig_h),
+    )

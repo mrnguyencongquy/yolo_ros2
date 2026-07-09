@@ -15,7 +15,7 @@ shared/images/*.jpg
   -> publish robot_ai_interfaces/TileImage lên /image_tiles
   -> yolo_bridge
   -> yolo_server
-  -> /grass_detections
+  -> /grass_segments
 ```
 
 `sample_publisher` chỉ dùng để verify pipeline trước khi tích hợp tiler thật. Nó không phải thành phần production bắt buộc.
@@ -30,7 +30,7 @@ bên thứ 3 / tiler thật
   -> publish TileImage lên /image_tiles
   -> yolo_bridge
   -> yolo_server
-  -> /grass_detections
+  -> /grass_segments
 ```
 
 Khi có tiler thật, không cần chạy `sample_publisher`; chỉ cần `yolo_bridge` subscribe `/image_tiles`.
@@ -178,7 +178,7 @@ Với mỗi `TileImage` nhận từ `/image_tiles`, nó làm:
 5. Parse JSON thành list detection.
 6. Đổi bbox local trong tile thành bbox global trên ảnh gốc bằng `x_offset`, `y_offset`, `orig_width`, `orig_height`.
 7. Gửi detection global vào aggregator theo `image_id`.
-8. Khi đủ `num_tiles` hoặc timeout, publish `Detection2DArray` lên `/grass_detections`.
+8. Khi đủ `num_tiles` hoặc timeout, publish `GrassSegmentationArray` lên `/grass_segments`.
 
 ## 7. YOLO Server Xử Lý Gì
 
@@ -208,18 +208,18 @@ Reply JSON có dạng:
 
 `bbox` trong JSON là tọa độ local trong tile. `yolo_server` không cộng offset.
 
-## 8. Output Chính: `/grass_detections`
+## 8. Output Chính: `/grass_segments`
 
 Topic:
 
 ```text
-/grass_detections
+/grass_segments
 ```
 
 Type:
 
 ```text
-vision_msgs/msg/Detection2DArray
+robot_ai_interfaces/msg/GrassSegmentationArray
 ```
 
 Publisher:
@@ -229,58 +229,29 @@ Publisher:
 Subscriber:
 
 - Hiện repo chưa có downstream node riêng.
-- Có thể dùng `ros2 topic echo /grass_detections` để subscribe và print.
+- Có thể dùng `ros2 topic echo /grass_segments` để subscribe và print.
 - Production downstream có thể là module điều hướng, module vẽ bbox, logger, hoặc controller robot.
 
-Một ảnh gốc sẽ tạo một message `/grass_detections` khi:
+Một ảnh gốc sẽ tạo một message `/grass_segments` khi:
 
 - đã nhận đủ `num_tiles`, hoặc
 - hết timeout gom tile.
 
-Nếu ảnh không có object, vẫn có thể publish message với `detections=[]`.
+Nếu ảnh không có object, vẫn có thể publish message với `segments=[]`.
 
-## 9. Format Detection Output
+## 9. Format Output (`/grass_segments`)
 
-Mỗi detection trong `Detection2DArray.detections` có dạng chính:
+Mỗi phần tử trong `GrassSegmentationArray.segments` (toạ độ GLOBAL trên ảnh gốc):
 
 ```text
-header.frame_id
-results[0].hypothesis.class_id
-results[0].hypothesis.score
-bbox.center.position.x
-bbox.center.position.y
-bbox.size_x
-bbox.size_y
+class_name
+score
+bbox: center_x, center_y, size_x, size_y, theta
+polygon.points[]   (nếu segmentation model trả mask)
+mask               (dự phòng, hiện rỗng)
 ```
 
-Ví dụ:
-
-```yaml
-header:
-  frame_id: 4k_2.jpg#53
-results:
-- hypothesis:
-    class_id: handbag
-    score: 0.2627880871295929
-bbox:
-  center:
-    position:
-      x: 3409.312713623047
-      y: 1467.566463470459
-    theta: 0.0
-  size_x: 41.82025146484375
-  size_y: 55.13292694091797
-```
-
-Ý nghĩa:
-
-- `frame_id`: ảnh gốc/frame sinh ra detection.
-- `class_id`: tên class YOLO detect được.
-- `score`: confidence.
-- `center.x`, `center.y`: tâm bbox trên ảnh gốc, đơn vị pixel.
-- `size_x`, `size_y`: kích thước bbox trên ảnh gốc, đơn vị pixel.
-
-Đổi từ center/size sang góc trái trên và góc phải dưới:
+`header.frame_id = image_id`. Đổi center/size sang góc:
 
 ```text
 x1 = center_x - size_x / 2
@@ -304,7 +275,7 @@ Xem topic:
 ```bash
 ros2 topic list
 ros2 topic info /image_tiles -v
-ros2 topic info /grass_detections -v
+ros2 topic info /grass_segments -v
 ```
 
 Xem input tile:
@@ -316,14 +287,14 @@ ros2 topic echo /image_tiles --once
 Xem output detection:
 
 ```bash
-ros2 topic echo /grass_detections
+ros2 topic echo /grass_segments
 ```
 
 Xem tần suất:
 
 ```bash
 ros2 topic hz /image_tiles
-ros2 topic hz /grass_detections
+ros2 topic hz /grass_segments
 ```
 
 Xem log:
@@ -335,7 +306,7 @@ docker logs -f yolo_detector
 
 ## 11. Trách Nhiệm Tích Hợp Của Bên Thứ 3
 
-Bên thứ 3 không cần biết YOLO hoặc `/grass_detections`. Bên thứ 3 chỉ cần publish đúng contract `/image_tiles`.
+Bên thứ 3 không cần biết YOLO hoặc `/grass_segments`. Bên thứ 3 chỉ cần publish đúng contract `/image_tiles`.
 
 Bắt buộc đúng:
 

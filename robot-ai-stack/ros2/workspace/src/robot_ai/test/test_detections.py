@@ -6,7 +6,19 @@ from robot_ai.detections import parse_detections
 def test_valid_list():
     raw = json.dumps([{"class_id": 0, "class_name": "grass", "confidence": 0.9, "bbox": [1, 2, 3, 4]}]).encode()
     out = parse_detections(raw)
-    assert out == [{"class_id": 0, "class_name": "grass", "confidence": 0.9, "bbox": [1.0, 2.0, 3.0, 4.0]}]
+    assert out == [{"class_id": 0, "class_name": "grass", "confidence": 0.9, "bbox": [1.0, 2.0, 3.0, 4.0], "polygon": []}]
+
+
+def test_valid_polygon():
+    raw = json.dumps([{
+        "class_id": 0,
+        "class_name": "grass",
+        "confidence": 0.9,
+        "bbox": [1, 2, 3, 4],
+        "polygon": [[1, 2], [3, 4]],
+    }]).encode()
+    out = parse_detections(raw)
+    assert out[0]["polygon"] == [[1.0, 2.0], [3.0, 4.0]]
 
 
 def test_bad_json_returns_empty():             # TC-43
