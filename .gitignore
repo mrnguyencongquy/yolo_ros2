@@ -28,6 +28,9 @@ log/
 # Keep committed lightweight sample(s); ignore large ad-hoc captures.
 robot-ai-stack/shared/images/*
 !robot-ai-stack/shared/images/test_4k.jpg
+!robot-ai-stack/shared/images/4k_1.jpg
+!robot-ai-stack/shared/images/4k_2.jpg
+
 
 # Model artifacts
 # Existing small bootstrap weights may remain tracked; new trained/exported weights
