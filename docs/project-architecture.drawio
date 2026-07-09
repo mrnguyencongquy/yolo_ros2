@@ -1,68 +1,85 @@
-<mxfile host="65bd71144e">
-    <diagram id="grass-robot-ai-stack-simple" name="Simple Architecture">
-        <mxGraphModel dx="637" dy="902" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="800" math="0" shadow="0">
-            <root>
-                <mxCell id="0"/>
-                <mxCell id="1" parent="0"/>
-                <mxCell id="title" value="Grass Robot AI Stack" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1;align=center;verticalAlign=middle;" parent="1" vertex="1">
-                    <mxGeometry x="290" y="30" width="620" height="40" as="geometry"/>
-                </mxCell>
-                <mxCell id="input_dev" value="Image folder" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;fontSize=14;fontStyle=1;" parent="1" vertex="1">
-                    <mxGeometry x="40" y="195" width="170" height="70" as="geometry"/>
-                </mxCell>
-                <mxCell id="ros2_box" value="ros2_node container" style="swimlane;html=1;whiteSpace=wrap;fillColor=#f7f7f7;strokeColor=#616161;fontSize=16;fontStyle=1;startSize=40;" parent="1" vertex="1">
-                    <mxGeometry x="310" y="110" width="430" height="360" as="geometry"/>
-                </mxCell>
-                <mxCell id="sample" value="sample_publisher" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;fontSize=14;" parent="ros2_box" vertex="1">
-                    <mxGeometry x="20" y="90" width="150" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="tiles" value="/image_tiles" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1565c0;fontSize=14;fontStyle=1;" parent="ros2_box" vertex="1">
-                    <mxGeometry x="260" y="90" width="140" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="bridge" value="yolo_bridge" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ef6c00;fontSize=14;fontStyle=1;" parent="ros2_box" vertex="1">
-                    <mxGeometry x="145" y="190" width="140" height="65" as="geometry"/>
-                </mxCell>
-                <mxCell id="detections" value="/grass_detections" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1565c0;fontSize=14;fontStyle=1;" parent="ros2_box" vertex="1">
-                    <mxGeometry x="130" y="290" width="170" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="e_sample_tiles" value="TileImage" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1565c0;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" parent="ros2_box" source="sample" target="tiles" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="e_tiles_bridge" value="DDS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1565c0;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" parent="ros2_box" source="tiles" target="bridge" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="e_bridge_detections" value="Detection2DArray" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1565c0;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" parent="ros2_box" source="bridge" target="detections" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="yolo_box" value="yolo_detector container" style="swimlane;html=1;whiteSpace=wrap;fillColor=#fff8e1;strokeColor=#ff8f00;fontSize=16;fontStyle=1;startSize=40;" parent="1" vertex="1">
-                    <mxGeometry x="820" y="110" width="240" height="170" as="geometry"/>
-                </mxCell>
-                <mxCell id="server" value="yolo_server&#xa;YOLO model" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ef6c00;fontSize=14;fontStyle=1;" parent="yolo_box" vertex="1">
-                    <mxGeometry x="45" y="75" width="150" height="65" as="geometry"/>
-                </mxCell>
-                <mxCell id="downstream" value="ROS2 downstream" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ede7f6;strokeColor=#5e35b1;fontSize=14;fontStyle=1;" parent="1" vertex="1">
-                    <mxGeometry x="435" y="520" width="180" height="70" as="geometry"/>
-                </mxCell>
-                <mxCell id="legend" value="&lt;b&gt;Legend&lt;/b&gt;&lt;br&gt;Blue = ROS2 topic / DDS&lt;br&gt;Orange = ZeroMQ TCP&lt;br&gt;Green = dev input&lt;br&gt;Light blue = production input" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fafafa;strokeColor=#9e9e9e;fontSize=12;align=left;spacingLeft=10;" parent="1" vertex="1">
-                    <mxGeometry x="850" y="400" width="230" height="110" as="geometry"/>
-                </mxCell>
-                <mxCell id="e_dev_sample" value="images" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2e7d32;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" parent="1" source="input_dev" target="sample" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="e_bridge_yolo" value="JPEG" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#ef6c00;strokeWidth=3;endArrow=block;endFill=1;fontSize=12;" parent="1" source="bridge" target="server" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="e_yolo_bridge" value="JSON" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#ef6c00;strokeWidth=3;dashed=1;endArrow=block;endFill=1;fontSize=12;" parent="1" source="server" target="bridge" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="940" y="333"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="e_detections_downstream" value="DDS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1565c0;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" parent="1" source="detections" target="downstream" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-            </root>
-        </mxGraphModel>
-    </diagram>
+<mxfile host="app.diagrams.net">
+  <diagram id="grass-robot-ai-stack" name="Architecture">
+    <mxGraphModel dx="1000" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1060" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="Grass Robot AI Stack — kiến trúc triển khai" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1;align=center;verticalAlign=middle;" parent="1" vertex="1">
+          <mxGeometry x="470" y="20" width="700" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ext_tiler" value="Tiler bên thứ 3&#xa;(production)&#xa;publish /image_tiles" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0277bd;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="440" width="190" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="downstream" value="ROS2 downstream&#xa;(navigation / xử lý)&#xa;subscribe /grass_detections" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ede7f6;strokeColor=#5e35b1;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1500" y="440" width="180" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- ===== Host OS ===== -->
+        <mxCell id="host" value="Host OS — Ubuntu 24.04 (PC x86 · RTX 3060)   |   JetPack 7.2 (Jetson AGX Orin 64GB)" style="swimlane;html=1;whiteSpace=wrap;startSize=36;fillColor=#f5f5f5;strokeColor=#455a64;fontSize=15;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="260" y="80" width="1200" height="840" as="geometry"/>
+        </mxCell>
+
+        <!-- ===== Docker ===== -->
+        <mxCell id="docker" value="Docker Engine · docker compose · network_mode: host · nvidia-container-toolkit" style="swimlane;html=1;whiteSpace=wrap;startSize=32;fillColor=#e3f2fd;strokeColor=#1565c0;fontSize=14;fontStyle=1;verticalAlign=top;" parent="host" vertex="1">
+          <mxGeometry x="20" y="50" width="880" height="770" as="geometry"/>
+        </mxCell>
+
+        <!-- ros2 container -->
+        <mxCell id="ros2c" value="ros2_node — container (ROS2 Jazzy)" style="swimlane;html=1;whiteSpace=wrap;startSize=32;fillColor=#eceff1;strokeColor=#37474f;fontSize=14;fontStyle=1;verticalAlign=top;" parent="docker" vertex="1">
+          <mxGeometry x="20" y="50" width="540" height="690" as="geometry"/>
+        </mxCell>
+        <mxCell id="pkg_if" value="package  robot_ai_interfaces&#xa;msg/TileImage  (contract)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffde7;strokeColor=#f9a825;fontSize=13;fontStyle=1;" parent="ros2c" vertex="1">
+          <mxGeometry x="20" y="46" width="500" height="58" as="geometry"/>
+        </mxCell>
+        <mxCell id="pkg_ra" value="package  robot_ai  (nodes)" style="swimlane;html=1;whiteSpace=wrap;startSize=30;fillColor=#f1f8e9;strokeColor=#558b2f;fontSize=13;fontStyle=1;verticalAlign=top;" parent="ros2c" vertex="1">
+          <mxGeometry x="20" y="120" width="500" height="540" as="geometry"/>
+        </mxCell>
+        <mxCell id="sample" value="sample_publisher&#xa;(dev) đọc folder → 4×3 tile&#xa;+ metadata TileImage" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;fontSize=12;fontStyle=1;" parent="pkg_ra" vertex="1">
+          <mxGeometry x="20" y="44" width="180" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="bridge" value="yolo_bridge&#xa;ZMQ client&#xa;LOCAL→GLOBAL + gom image_id" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ef6c00;fontSize=12;fontStyle=1;" parent="pkg_ra" vertex="1">
+          <mxGeometry x="165" y="205" width="195" height="96" as="geometry"/>
+        </mxCell>
+        <mxCell id="writer" value="result_writer&#xa;(tuỳ chọn · RESULT_SAVE)&#xa;→ shared/output" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ede7f6;strokeColor=#5e35b1;fontSize=12;fontStyle=1;" parent="pkg_ra" vertex="1">
+          <mxGeometry x="300" y="405" width="180" height="90" as="geometry"/>
+        </mxCell>
+
+        <!-- yolo container -->
+        <mxCell id="yoloc" value="yolo_detector — container (KHÔNG ROS2)" style="swimlane;html=1;whiteSpace=wrap;startSize=32;fillColor=#fff8e1;strokeColor=#ff8f00;fontSize=14;fontStyle=1;verticalAlign=top;" parent="docker" vertex="1">
+          <mxGeometry x="590" y="50" width="270" height="300" as="geometry"/>
+        </mxCell>
+        <mxCell id="server" value="yolo_server&#xa;YOLO model (GPU)&#xa;ZeroMQ REP&#xa;tcp://127.0.0.1:5555" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ef6c00;fontSize=12;fontStyle=1;" parent="yoloc" vertex="1">
+          <mxGeometry x="45" y="95" width="180" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- host resources -->
+        <mxCell id="vol_in" value="shared/images&#xa;(volume)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;fillColor=#e8f5e9;strokeColor=#2e7d32;fontSize=12;" parent="host" vertex="1">
+          <mxGeometry x="940" y="60" width="230" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="vol_out" value="shared/output&#xa;(volume)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;fillColor=#ede7f6;strokeColor=#5e35b1;fontSize=12;" parent="host" vertex="1">
+          <mxGeometry x="940" y="180" width="230" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="gpu" value="NVIDIA GPU (host)&#xa;chia sẻ cho yolo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffebee;strokeColor=#c62828;fontSize=12;fontStyle=1;" parent="host" vertex="1">
+          <mxGeometry x="940" y="300" width="230" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ===== Edges: topics (pub→sub) = mũi tên xanh; ZeroMQ = cam ===== -->
+        <mxCell id="e_volin_sample" value="đọc ảnh (dev)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;strokeColor=#2e7d32;strokeWidth=2;" parent="1" source="vol_in" target="sample" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e_tiler_bridge" value="/image_tiles (production)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;strokeColor=#1565c0;strokeWidth=2;dashed=1;" parent="1" source="ext_tiler" target="bridge" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e_sample_bridge" value="/image_tiles · TileImage&#xa;(pub → sub)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;strokeColor=#1565c0;strokeWidth=2;" parent="1" source="sample" target="bridge" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e_bridge_server" value="ZeroMQ REQ · JPEG" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;strokeColor=#ef6c00;strokeWidth=3;" parent="1" source="bridge" target="server" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e_server_bridge" value="ZeroMQ REP · JSON (bbox LOCAL)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;strokeColor=#ef6c00;strokeWidth=3;dashed=1;" parent="1" source="server" target="bridge" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e_bridge_writer" value="/grass_detections&#xa;(pub → sub)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;strokeColor=#1565c0;strokeWidth=2;" parent="1" source="bridge" target="writer" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e_bridge_downstream" value="/grass_detections · Detection2DArray" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;strokeColor=#1565c0;strokeWidth=2;" parent="1" source="bridge" target="downstream" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e_writer_volout" value="JSON + annotate" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;strokeColor=#5e35b1;strokeWidth=2;dashed=1;" parent="1" source="writer" target="vol_out" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="&lt;b&gt;Chú thích&lt;/b&gt;&#xa;— Lớp: Host OS ▸ Docker ▸ container ▸ package ▸ node&#xa;— Mũi tên XANH = ROS2 topic (pub → sub, qua DDS)&#xa;— Mũi tên CAM = ZeroMQ REQ/REP (đồng bộ ros2 ↔ yolo, tcp 127.0.0.1:5555)&#xa;— Mũi tên XANH LÁ / TÍM = truy cập volume (đọc ảnh / ghi output)&#xa;— sample_publisher (dev) ⟷ tiler bên thứ 3 (production): cùng publish /image_tiles" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fafafa;strokeColor=#9e9e9e;fontSize=12;align=left;spacingLeft=10;verticalAlign=top;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="260" y="940" width="1000" height="110" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
 </mxfile>
