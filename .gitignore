@@ -32,6 +32,9 @@ robot-ai-stack/shared/images/*
 # Runtime output (verify artifacts from result_writer)
 robot-ai-stack/shared/output/
 
+# Local reference data/datasets (quá lớn, không đưa vào repo)
+/ref/
+
 
 # Model artifacts
 # Existing small bootstrap weights may remain tracked; new trained/exported weights
