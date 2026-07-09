@@ -1,77 +1,68 @@
-<mxfile host="app.diagrams.net" modified="2026-07-08T00:00:00.000Z" agent="Codex" version="24.7.17" type="device">
-  <diagram id="grass-robot-ai-stack-simple" name="Simple Architecture">
-    <mxGraphModel dx="1400" dy="850" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="800" math="0" shadow="0">
-      <root>
-        <mxCell id="0" />
-        <mxCell id="1" parent="0" />
-
-        <mxCell id="title" value="Grass Robot AI Stack" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="290" y="30" width="620" height="40" as="geometry" />
-        </mxCell>
-
-        <mxCell id="input_prod" value="Third-party tiler&#xa;(production)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0277bd;fontSize=14;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="60" y="170" width="170" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="input_dev" value="Image folder&#xa;(dev only)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;fontSize=14;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="60" y="330" width="170" height="70" as="geometry" />
-        </mxCell>
-
-        <mxCell id="ros2_box" value="ros2_node container" style="swimlane;html=1;whiteSpace=wrap;fillColor=#f7f7f7;strokeColor=#616161;fontSize=16;fontStyle=1;startSize=40;" vertex="1" parent="1">
-          <mxGeometry x="300" y="120" width="430" height="360" as="geometry" />
-        </mxCell>
-        <mxCell id="sample" value="sample_publisher" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;fontSize=14;" vertex="1" parent="ros2_box">
-          <mxGeometry x="40" y="90" width="150" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="tiles" value="/image_tiles" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1565c0;fontSize=14;fontStyle=1;" vertex="1" parent="ros2_box">
-          <mxGeometry x="245" y="90" width="140" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="bridge" value="yolo_bridge" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ef6c00;fontSize=14;fontStyle=1;" vertex="1" parent="ros2_box">
-          <mxGeometry x="145" y="190" width="140" height="65" as="geometry" />
-        </mxCell>
-        <mxCell id="detections" value="/grass_detections" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1565c0;fontSize=14;fontStyle=1;" vertex="1" parent="ros2_box">
-          <mxGeometry x="130" y="290" width="170" height="60" as="geometry" />
-        </mxCell>
-
-        <mxCell id="yolo_box" value="yolo_detector container" style="swimlane;html=1;whiteSpace=wrap;fillColor=#fff8e1;strokeColor=#ff8f00;fontSize=16;fontStyle=1;startSize=40;" vertex="1" parent="1">
-          <mxGeometry x="830" y="205" width="240" height="170" as="geometry" />
-        </mxCell>
-        <mxCell id="server" value="yolo_server&#xa;YOLO model" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ef6c00;fontSize=14;fontStyle=1;" vertex="1" parent="yolo_box">
-          <mxGeometry x="45" y="75" width="150" height="65" as="geometry" />
-        </mxCell>
-
-        <mxCell id="downstream" value="ROS2 downstream" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ede7f6;strokeColor=#5e35b1;fontSize=14;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="425" y="570" width="180" height="70" as="geometry" />
-        </mxCell>
-
-        <mxCell id="legend" value="Legend&#xa;Blue = ROS2 topic / DDS&#xa;Orange = ZeroMQ TCP&#xa;Green = dev input&#xa;Light blue = production input" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fafafa;strokeColor=#9e9e9e;fontSize=12;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="870" y="520" width="230" height="110" as="geometry" />
-        </mxCell>
-
-        <mxCell id="e_prod_tiles" value="TileImage" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1565c0;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" edge="1" parent="1" source="input_prod" target="tiles">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e_dev_sample" value="images" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2e7d32;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" edge="1" parent="1" source="input_dev" target="sample">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e_sample_tiles" value="TileImage" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1565c0;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" edge="1" parent="ros2_box" source="sample" target="tiles">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e_tiles_bridge" value="DDS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1565c0;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" edge="1" parent="ros2_box" source="tiles" target="bridge">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e_bridge_yolo" value="JPEG" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#ef6c00;strokeWidth=3;endArrow=block;endFill=1;fontSize=12;" edge="1" parent="1" source="bridge" target="server">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e_yolo_bridge" value="JSON" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#ef6c00;strokeWidth=3;dashed=1;endArrow=block;endFill=1;fontSize=12;" edge="1" parent="1" source="server" target="bridge">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e_bridge_detections" value="Detection2DArray" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1565c0;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" edge="1" parent="ros2_box" source="bridge" target="detections">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e_detections_downstream" value="DDS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1565c0;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" edge="1" parent="1" source="detections" target="downstream">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-      </root>
-    </mxGraphModel>
-  </diagram>
+<mxfile host="65bd71144e">
+    <diagram id="grass-robot-ai-stack-simple" name="Simple Architecture">
+        <mxGraphModel dx="637" dy="902" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="800" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="Grass Robot AI Stack" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1;align=center;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="290" y="30" width="620" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="input_dev" value="Image folder" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="195" width="170" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="ros2_box" value="ros2_node container" style="swimlane;html=1;whiteSpace=wrap;fillColor=#f7f7f7;strokeColor=#616161;fontSize=16;fontStyle=1;startSize=40;" parent="1" vertex="1">
+                    <mxGeometry x="310" y="110" width="430" height="360" as="geometry"/>
+                </mxCell>
+                <mxCell id="sample" value="sample_publisher" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;fontSize=14;" parent="ros2_box" vertex="1">
+                    <mxGeometry x="20" y="90" width="150" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="tiles" value="/image_tiles" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1565c0;fontSize=14;fontStyle=1;" parent="ros2_box" vertex="1">
+                    <mxGeometry x="260" y="90" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="bridge" value="yolo_bridge" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ef6c00;fontSize=14;fontStyle=1;" parent="ros2_box" vertex="1">
+                    <mxGeometry x="145" y="190" width="140" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="detections" value="/grass_detections" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1565c0;fontSize=14;fontStyle=1;" parent="ros2_box" vertex="1">
+                    <mxGeometry x="130" y="290" width="170" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_sample_tiles" value="TileImage" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1565c0;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" parent="ros2_box" source="sample" target="tiles" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_tiles_bridge" value="DDS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1565c0;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" parent="ros2_box" source="tiles" target="bridge" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_bridge_detections" value="Detection2DArray" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1565c0;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" parent="ros2_box" source="bridge" target="detections" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="yolo_box" value="yolo_detector container" style="swimlane;html=1;whiteSpace=wrap;fillColor=#fff8e1;strokeColor=#ff8f00;fontSize=16;fontStyle=1;startSize=40;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="110" width="240" height="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="server" value="yolo_server&#xa;YOLO model" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ef6c00;fontSize=14;fontStyle=1;" parent="yolo_box" vertex="1">
+                    <mxGeometry x="45" y="75" width="150" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="downstream" value="ROS2 downstream" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ede7f6;strokeColor=#5e35b1;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="435" y="520" width="180" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend" value="&lt;b&gt;Legend&lt;/b&gt;&lt;br&gt;Blue = ROS2 topic / DDS&lt;br&gt;Orange = ZeroMQ TCP&lt;br&gt;Green = dev input&lt;br&gt;Light blue = production input" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fafafa;strokeColor=#9e9e9e;fontSize=12;align=left;spacingLeft=10;" parent="1" vertex="1">
+                    <mxGeometry x="850" y="400" width="230" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_dev_sample" value="images" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2e7d32;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" parent="1" source="input_dev" target="sample" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_bridge_yolo" value="JPEG" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#ef6c00;strokeWidth=3;endArrow=block;endFill=1;fontSize=12;" parent="1" source="bridge" target="server" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_yolo_bridge" value="JSON" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#ef6c00;strokeWidth=3;dashed=1;endArrow=block;endFill=1;fontSize=12;" parent="1" source="server" target="bridge" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="940" y="333"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_detections_downstream" value="DDS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1565c0;strokeWidth=2;endArrow=block;endFill=1;fontSize=12;" parent="1" source="detections" target="downstream" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
 </mxfile>
