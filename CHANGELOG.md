@@ -15,6 +15,9 @@ Tất cả thay đổi đáng kể của project ghi ở đây.
 ### Removed
 - Topic tương thích `/grass_detections` (`vision_msgs/Detection2DArray`) — **contract 2.0.0**; `/grass_segments` là output DUY NHẤT. Bỏ `vision_msgs` khỏi deps.
 
+### Fixed
+- Cô lập ROS2 discovery về `LOCALHOST` (`ROS_AUTOMATIC_DISCOVERY_RANGE`) cho container `ros2` — tránh merge nhầm graph với node ROS2 khác trên LAN (vd Jetson cùng `ROS_DOMAIN_ID=0`) khiến `yolo_bridge` nhận tile/ảnh cũ + node bị trùng.
+
 ## [0.1.0] - 2026-07-08
 
 Bản MVP dev-first đầu tiên: pipeline tiling → YOLO → detection theo toạ độ ảnh gốc, chạy trên PC (CUDA), verify E2E.

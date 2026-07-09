@@ -7,6 +7,9 @@ services:
     network_mode: host
     environment:
       - ROS_DOMAIN_ID=0
+      # Cô lập ROS2 graph trong máy — tránh merge với node ROS2 khác trên LAN
+      # (vd Jetson cùng ROS_DOMAIN_ID=0) gây nhận nhầm tile/ảnh cũ.
+      - ROS_AUTOMATIC_DISCOVERY_RANGE=LOCALHOST
       - YOLO_ZMQ_PORT=5555
       - SAMPLE_DIR=/images
       # Lưu kết quả để verify (mặc định TẮT; bật: RESULT_SAVE=1 docker compose up)
