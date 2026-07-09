@@ -51,10 +51,9 @@
 | `class_name` | `string` | tên class model trả về, vd `grass` |
 | `score` | `float32` | confidence `[0..1]` |
 | `bbox` | `robot_ai_interfaces/BBox2D` | bbox GLOBAL dạng center + size (`center_x, center_y, size_x, size_y, theta`) |
-| `mask` | `sensor_msgs/Image` | mask bitmap; hiện để rỗng cho model detect/bbox hoặc khi chưa vận chuyển mask bitmap |
 | `polygon` | `geometry_msgs/Polygon` | polygon GLOBAL nếu YOLO segmentation model trả mask polygon |
 
-> Hiện ZeroMQ reply vẫn là JSON. Với model detection thường, `polygon=[]` và `mask` rỗng. Với YOLO segmentation model, `polygon` được map từ tile-local sang ảnh gốc. `mask` là field dự phòng cho bước vận chuyển mask bitmap sau này.
+> Hiện ZeroMQ reply vẫn là JSON. Với model detection thường, `polygon=[]`. Với YOLO segmentation model, `polygon` được map từ tile-local sang ảnh gốc.
 
 ---
 
@@ -81,7 +80,7 @@
 | `YOLO_MODEL` | yolo | `/app/models/yolo26n-seg.pt` | Model weights (đổi sang weights cỏ khi có) |
 | `YOLO_TARGET_CLASSES` | yolo | (rỗng) | Lọc class, ngăn cách dấu phẩy (vd `grass`); rỗng = tất cả |
 | `SAMPLE_DIR` | ros2 | `/images` | Folder ảnh cho `sample_publisher` (mount từ `shared/images`) |
-| `RESULT_SAVE` / `RESULT_FORMAT` / `RESULT_DIR` | ros2 | `0` / `both` / `/output` | `result_writer` lưu `/grass_segments` ra file (mặc định TẮT) |
+| `RESULT_SAVE` / `RESULT_FORMAT` / `RESULT_DIR` | ros2 | `1` / `both` / `/output` | `result_writer` ghi đè output mới nhất vào `latest_segments.json` / `latest_annotated.jpg` |
 | `ROS_DOMAIN_ID` | ros2 | `0` | ROS2 domain |
 
 **Tham số node `sample_publisher`** (launch): `mode` (`simulate_tiles`|`passthrough`), `cols` (4), `rows` (3), `period_s` (2.0).

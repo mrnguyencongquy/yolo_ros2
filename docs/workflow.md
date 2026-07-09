@@ -248,7 +248,6 @@ class_name
 score
 bbox: center_x, center_y, size_x, size_y, theta
 polygon.points[]   (nếu segmentation model trả mask)
-mask               (dự phòng, hiện rỗng)
 ```
 
 `header.frame_id = image_id`. Đổi center/size sang góc:

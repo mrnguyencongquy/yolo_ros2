@@ -11,9 +11,10 @@ class BBox:
 
 
 class Pt:
-    def __init__(self, x, y):
+    def __init__(self, x, y, z=0.0):
         self.x = x
         self.y = y
+        self.z = z
 
 
 class Poly:
@@ -34,13 +35,15 @@ class Arr:
         self.segments = segments
 
 
-def test_converts_center_size_to_xyxy():
+def test_converts_segment_to_output_contract():
     out = segments_to_list(Arr([Seg("grass", 0.9, 100, 200, 40, 60)]))
     assert out == [{
         "class_name": "grass", "score": 0.9,
-        "bbox_xyxy": [80.0, 170.0, 120.0, 230.0],
-        "bbox_center": [100.0, 200.0], "bbox_size": [40.0, 60.0],
-        "polygon": [],
+        "bbox": {
+            "center_x": 100.0, "center_y": 200.0,
+            "size_x": 40.0, "size_y": 60.0, "theta": 0.0,
+        },
+        "polygon": {"points": []},
     }]
 
 
@@ -50,4 +53,7 @@ def test_empty_segments():
 
 def test_polygon_mapped():
     out = segments_to_list(Arr([Seg("grass", 0.5, 10, 10, 2, 2, pts=[(1, 2), (3, 4)])]))
-    assert out[0]["polygon"] == [[1.0, 2.0], [3.0, 4.0]]
+    assert out[0]["polygon"]["points"] == [
+        {"x": 1.0, "y": 2.0, "z": 0.0},
+        {"x": 3.0, "y": 4.0, "z": 0.0},
+    ]

@@ -162,7 +162,6 @@ Mỗi segment chứa:
 | `segments[i].score` | confidence |
 | `segments[i].bbox` | bbox trên ảnh gốc |
 | `segments[i].polygon` | polygon trên ảnh gốc nếu model segmentation trả mask |
-| `segments[i].mask` | mask bitmap, hiện để rỗng cho bước vận chuyển mask sau |
 
 Downstream dùng output này để vẽ bbox/polygon, log JSON, điều hướng, hoặc xử lý điều khiển robot.
 

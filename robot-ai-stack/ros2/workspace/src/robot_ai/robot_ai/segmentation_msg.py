@@ -1,5 +1,4 @@
 from geometry_msgs.msg import Point32
-from sensor_msgs.msg import Image
 
 from robot_ai_interfaces.msg import BBox2D, GrassSegment, GrassSegmentationArray
 
@@ -23,7 +22,6 @@ def build_segmentation_array(header, image_id: str, global_segments: list[dict])
         bbox.theta = 0.0
         seg.bbox = bbox
 
-        seg.mask = Image()
         for x, y in s.get("polygon", []):
             p = Point32()
             p.x = float(x)

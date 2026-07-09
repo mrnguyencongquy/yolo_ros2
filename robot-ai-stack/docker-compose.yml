@@ -12,8 +12,8 @@ services:
       - ROS_AUTOMATIC_DISCOVERY_RANGE=LOCALHOST
       - YOLO_ZMQ_PORT=5555
       - SAMPLE_DIR=/images
-      # Lưu kết quả để verify (mặc định TẮT; bật: RESULT_SAVE=1 docker compose up)
-      - RESULT_SAVE=${RESULT_SAVE:-0}
+      # Lưu đè kết quả mới nhất vào ./shared/output/latest_segments.json.
+      - RESULT_SAVE=${RESULT_SAVE:-1}
       - RESULT_FORMAT=${RESULT_FORMAT:-both}
       - RESULT_DIR=/output
     volumes:
