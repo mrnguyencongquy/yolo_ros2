@@ -9,14 +9,17 @@ setup(
     data_files=[
         ("share/ament_index/resource_index/packages", ["resource/" + package_name]),
         ("share/" + package_name, ["package.xml"]),
-        ("share/" + package_name + "/launch", ["launch/robot_ai.launch.py"]),
+        (
+            "share/" + package_name + "/launch",
+            ["launch/robot_ai.launch.py", "launch/dual_model.launch.py"],
+        ),
     ],
     install_requires=["setuptools"],
     tests_require=["pytest"],
     zip_safe=True,
     maintainer="vizo",
     maintainer_email="dev3@vizo.co.jp",
-    description="Grass detection ROS2 nodes",
+    description="YOLO detection ROS2 nodes",
     license="Proprietary",
     entry_points={
         "console_scripts": [

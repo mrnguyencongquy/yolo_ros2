@@ -3,7 +3,7 @@
 <package format="3">
   <name>robot_ai</name>
   <version>0.1.0</version>
-  <description>Grass detection ROS2 nodes</description>
+  <description>YOLO detection ROS2 nodes</description>
   <maintainer email="dev3@vizo.co.jp">vizo</maintainer>
   <license>Proprietary</license>
 

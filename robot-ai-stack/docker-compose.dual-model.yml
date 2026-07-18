@@ -1,0 +1,42 @@
+services:
+  # The base compose file's single-model service stays available when this
+  # overlay is not used. Hide it here to prevent a port-5555 collision.
+  yolo:
+    profiles: ["single-model"]
+
+  ros2:
+    command:
+      - bash
+      - -lc
+      - source /workspace/install/setup.bash && ros2 launch robot_ai dual_model.launch.py watch_new_files:=${SAMPLE_WATCH_NEW_FILES:-false}
+    environment:
+      - YOLO_BASE_MODEL=${YOLO_BASE_MODEL:-/models/yolo11n.pt}
+      - YOLO_TRAINED_MODEL=${YOLO_TRAINED_MODEL:-/models/yolo26n-seg.pt}
+
+  yolo_base:
+    build:
+      context: ./yolo
+    container_name: yolo_base_detector
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - YOLO_ZMQ_PORT=5555
+      - YOLO_MODEL=${YOLO_BASE_MODEL:-/models/yolo11n.pt}
+      - YOLO_MODEL_AUTO_RELOAD=${YOLO_MODEL_AUTO_RELOAD:-0}
+      - YOLO_TARGET_CLASSES=${YOLO_BASE_TARGET_CLASSES:-}
+    volumes:
+      - ${MODEL_DIR:-./models}:/models:ro
+
+  yolo_trained:
+    build:
+      context: ./yolo
+    container_name: yolo_trained_detector
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - YOLO_ZMQ_PORT=5556
+      - YOLO_MODEL=${YOLO_TRAINED_MODEL:-/models/yolo26n-seg.pt}
+      - YOLO_MODEL_AUTO_RELOAD=${YOLO_MODEL_AUTO_RELOAD:-0}
+      - YOLO_TARGET_CLASSES=${YOLO_TRAINED_TARGET_CLASSES:-}
+    volumes:
+      - ${MODEL_DIR:-./models}:/models:ro

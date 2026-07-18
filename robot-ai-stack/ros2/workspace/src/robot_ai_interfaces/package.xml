@@ -2,7 +2,7 @@
 <package format="3">
   <name>robot_ai_interfaces</name>
   <version>0.1.0</version>
-  <description>Custom messages for grass-detection tiling pipeline</description>
+  <description>Custom messages for YOLO detection tiling pipeline</description>
   <maintainer email="dev3@vizo.co.jp">vizo</maintainer>
   <license>Proprietary</license>
 

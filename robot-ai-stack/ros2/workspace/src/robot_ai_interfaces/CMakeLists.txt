@@ -10,8 +10,8 @@ find_package(geometry_msgs REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/TileImage.msg"
   "msg/BBox2D.msg"
-  "msg/GrassSegment.msg"
-  "msg/GrassSegmentationArray.msg"
+  "msg/DetectedInstance.msg"
+  "msg/DetectedInstanceArray.msg"
   DEPENDENCIES std_msgs sensor_msgs geometry_msgs
 )
 

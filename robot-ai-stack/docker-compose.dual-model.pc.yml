@@ -1,0 +1,16 @@
+services:
+  yolo_base:
+    build:
+      dockerfile: Dockerfile.pc
+    gpus: all
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+
+  yolo_trained:
+    build:
+      dockerfile: Dockerfile.pc
+    gpus: all
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all

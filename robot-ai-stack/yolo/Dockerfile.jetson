@@ -19,6 +19,5 @@ RUN PIP_INDEX_URL=https://pypi.org/simple \
 WORKDIR /app
 
 COPY app ./app
-COPY models ./models
 
 CMD ["python3", "-m", "app.yolo_server"]

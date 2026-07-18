@@ -4,6 +4,7 @@ services:
     build:
       context: ./ros2
     container_name: ros2_node
+    restart: unless-stopped
     network_mode: host
     environment:
       - ROS_DOMAIN_ID=0
@@ -12,13 +13,14 @@ services:
       - ROS_AUTOMATIC_DISCOVERY_RANGE=LOCALHOST
       - YOLO_ZMQ_PORT=5555
       - SAMPLE_DIR=/images
-      # Lưu đè kết quả mới nhất vào ./shared/output/latest_segments.json.
+      - SAMPLE_WATCH_NEW_FILES=${SAMPLE_WATCH_NEW_FILES:-false}
+      # Lưu đè kết quả mới nhất vào ./shared/output/latest_detected_instances.json.
       - RESULT_SAVE=${RESULT_SAVE:-1}
       - RESULT_FORMAT=${RESULT_FORMAT:-both}
       - RESULT_DIR=/output
     volumes:
-      - ./shared/images:/images
-      - ./shared/output:/output
+      - ${IMAGE_DIR:-./shared/images}:/images:ro
+      - ${OUTPUT_DIR:-./shared/output}:/output
     stdin_open: true
     tty: true
 
@@ -26,12 +28,13 @@ services:
     build:
       context: ./yolo
     container_name: yolo_detector
+    restart: unless-stopped
     network_mode: host
     environment:
       - YOLO_ZMQ_PORT=5555
-      - YOLO_MODEL=/app/models/yolo26n-seg.pt
+      - YOLO_MODEL=${YOLO_MODEL:-/models/yolo26n-seg.pt}
+      - YOLO_MODEL_AUTO_RELOAD=${YOLO_MODEL_AUTO_RELOAD:-0}
     volumes:
-      - ./shared/images:/images
-      - ./models:/models
+      - ${MODEL_DIR:-./models}:/models:ro
     depends_on:
       - ros2

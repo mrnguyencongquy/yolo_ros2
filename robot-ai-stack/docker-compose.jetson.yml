@@ -2,9 +2,10 @@ services:
   yolo:
     build:
       dockerfile: Dockerfile.jetson
+    # Jetson CDI specs can point at stale DRM nodes such as /dev/dri/card0.
+    # Use the NVIDIA runtime path instead of Compose CDI device injection.
+    runtime: nvidia
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
       - LD_LIBRARY_PATH=/opt/nvidia/l4t-gpu-libs/nvgpu:/usr/local/cuda/lib64
-    devices:
-      - nvidia.com/gpu=all

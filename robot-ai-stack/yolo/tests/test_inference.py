@@ -28,7 +28,7 @@ class FakeMasks:
 
 
 class FakeModel:
-    names = {0: "grass", 1: "tree"}
+    names = {0: "target_a", 1: "target_b"}
 
     def __init__(self, boxes, masks=None):
         self._boxes = boxes
@@ -57,7 +57,7 @@ def test_run_none_image_returns_empty():
 def test_multiple_detections():                # TC-27
     m = FakeModel([FakeBox(0, 0.9, [1, 2, 3, 4]), FakeBox(1, 0.8, [5, 6, 7, 8])])
     out = run_inference(m, np.zeros((8, 8, 3), np.uint8))
-    assert len(out) == 2 and out[0]["class_name"] == "grass"
+    assert len(out) == 2 and out[0]["class_name"] == "target_a"
 
 
 def test_single_detection():                   # TC-28
@@ -67,11 +67,11 @@ def test_single_detection():                   # TC-28
 
 def test_target_class_filter():                # TC-31
     m = FakeModel([FakeBox(0, 0.9, [1, 1, 2, 2]), FakeBox(1, 0.9, [3, 3, 4, 4])])
-    out = run_inference(m, np.zeros((8, 8, 3), np.uint8), target_classes={"grass"})
-    assert len(out) == 1 and out[0]["class_name"] == "grass"
+    out = run_inference(m, np.zeros((8, 8, 3), np.uint8), target_classes={"target_a"})
+    assert len(out) == 1 and out[0]["class_name"] == "target_a"
 
 
-def test_segmentation_polygon():
+def test_polygon_output():
     masks = FakeMasks([np.array([[1, 2], [3, 4]], dtype=np.float32)])
     m = FakeModel([FakeBox(0, 0.9, [1, 2, 3, 4])], masks=masks)
     out = run_inference(m, np.zeros((8, 8, 3), np.uint8))

@@ -6,9 +6,8 @@ from cv_bridge import CvBridge
 from rclpy.node import Node
 
 from robot_ai_interfaces.msg import TileImage
+from robot_ai.image_queue import IMAGE_EXTENSIONS, ImageFileQueue
 from robot_ai.tiling import split_image
-
-_EXTS = (".jpg", ".jpeg", ".png", ".bmp")
 
 
 class SamplePublisher(Node):
@@ -21,28 +20,46 @@ class SamplePublisher(Node):
         self.declare_parameter("cols", 4)
         self.declare_parameter("rows", 3)
         self.declare_parameter("period_s", 2.0)
+        self.declare_parameter(
+            "watch_new_files",
+            os.environ.get("SAMPLE_WATCH_NEW_FILES", "0").strip().lower() in ("1", "true", "yes", "on"),
+        )
 
         self._dir = self.get_parameter("sample_dir").value
         self._mode = self.get_parameter("mode").value
         self._cols = self.get_parameter("cols").value
         self._rows = self.get_parameter("rows").value
+        self._watch_new_files = self.get_parameter("watch_new_files").value
         self._bridge = CvBridge()
         self._pub = self.create_publisher(TileImage, "/image_tiles", 10)
 
         if not os.path.isdir(self._dir):
             self.get_logger().error(f"SAMPLE_DIR not found: {self._dir}")
             raise SystemExit(2)
-        self._files = [f for f in sorted(os.listdir(self._dir)) if f.lower().endswith(_EXTS)]
+        self._files = self._list_images()
         if not self._files:
             self.get_logger().warning(f"No images in {self._dir}; nothing to publish")
         self._idx = 0
+        self._image_queue = ImageFileQueue(self._dir) if self._watch_new_files else None
+        if self._image_queue is not None:
+            self._image_queue.refresh()
         self.create_timer(self.get_parameter("period_s").value, self._tick)
 
+    def _list_images(self) -> list[str]:
+        return [f for f in sorted(os.listdir(self._dir)) if f.lower().endswith(IMAGE_EXTENSIONS)]
+
     def _tick(self):
-        if not self._files:
-            return
-        fname = self._files[self._idx % len(self._files)]
-        self._idx += 1
+        if self._image_queue is not None:
+            self._image_queue.refresh()
+            queued = self._image_queue.pop()
+            if queued is None:
+                return
+            fname, revision = queued
+        else:
+            if not self._files:
+                return
+            fname = self._files[self._idx % len(self._files)]
+            self._idx += 1
         img = cv2.imread(os.path.join(self._dir, fname))
         if img is None:
             self.get_logger().warning(f"Unreadable image, skipping: {fname}")
@@ -58,6 +75,8 @@ class SamplePublisher(Node):
                 self._publish_tile(image_id, spec.index, spec.row, spec.col,
                                    self._cols * self._rows, spec.x_offset, spec.y_offset,
                                    spec.width, spec.height, w, h, tile)
+        if self._image_queue is not None:
+            self._image_queue.mark_processed(fname, revision)
 
     def _publish_tile(self, image_id, index, row, col, num_tiles,
                       x_off, y_off, tw, th, ow, oh, tile_img):
